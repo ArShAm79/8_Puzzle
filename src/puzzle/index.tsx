@@ -1,51 +1,17 @@
 import { useEffect, useState } from 'react'
+import { columnOnClickHandler, createChartData } from './functions'
 import './index.css'
 
+const length = 5
 const Puzzle = () => {
-  const [data, setdata] = useState<number[][]>([
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8]
-  ])
+  const [data, setdata] = useState<number[][]>([])
   const [numberOfMoves, setnumberOfMoves] = useState<number>(0)
   useEffect(() => {
-    const numbers = Array(9)
-      .fill(0)
-      .map((_, i) => i + 1)
-    const splitedNumbers = [
-      [],
-      numbers.slice(0, 3),
-      numbers.slice(3, 6),
-      numbers.slice(6, 9),
-      []
-    ]
+    const initialData = createChartData(length)
+    const splitedNumbers = [[], ...initialData, []]
     setdata(splitedNumbers)
-    console.log(splitedNumbers)
   }, [])
 
-  const checkIsCornerTo9 = (rowIndex: number, colIndex: number) => {
-    return data[rowIndex][colIndex] === 9
-      ? { rowIndex, colIndex }
-      : data[rowIndex + 1][colIndex] === 9
-      ? { rowIndex: rowIndex + 1, colIndex }
-      : data[rowIndex - 1][colIndex] === 9
-      ? { rowIndex: rowIndex - 1, colIndex }
-      : data[rowIndex][colIndex + 1] === 9
-      ? { rowIndex, colIndex: colIndex + 1 }
-      : data[rowIndex][colIndex - 1] === 9
-      ? { rowIndex, colIndex: colIndex - 1 }
-      : undefined
-  }
-  const columnOnClickHandler = (rowIndex: number, colIndex: number) => {
-    if (checkIsCornerTo9(rowIndex, colIndex)) {
-      const temp = data[rowIndex][colIndex]
-      const info = checkIsCornerTo9(rowIndex, colIndex)
-      data[rowIndex][colIndex] = 9
-      data[info!.rowIndex][info!.colIndex] = temp
-      setdata([...data])
-      setnumberOfMoves(numberOfMoves + 1)
-    }
-  }
   return (
     <div>
       <header className="header">
@@ -58,10 +24,19 @@ const Puzzle = () => {
             {row.map((col, j) => (
               <div
                 className="chart_col"
-                onClick={() => columnOnClickHandler(i, j)}
+                onClick={() =>
+                  columnOnClickHandler(
+                    i,
+                    j,
+                    data,
+                    length * length,
+                    setdata,
+                    setnumberOfMoves
+                  )
+                }
                 role="presentation"
                 key={col.toString()}>
-                {col === 9 ? '' : col}
+                {col === length * length ? '' : col}
               </div>
             ))}
           </div>
