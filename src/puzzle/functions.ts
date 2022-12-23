@@ -198,7 +198,9 @@ const createNewNode = (
 
     const option: NodeType = {
       turn: currentNode.turn + 1,
-      pattern: currentNode.pattern + ',',
+      pattern:
+        currentNode.pattern +
+        `-${item.i},${item.j}=>${emptyPlace?.i},${emptyPlace?.j}`,
       puzzle,
       diffrence: 0
     }
@@ -213,12 +215,10 @@ export const solvePuzzle = (currentNode: NodeType, goalNode: NodeType) => {
   const length = currentNode.puzzle.length
   let options: NodeType[] = [currentNode]
   let oldOptions: string[] = []
-  let turn = 0
+
   while (true) {
     if (options.length === 0) {
-      console.log('in bade')
-
-      break
+      return false
     }
 
     oldOptions = [
@@ -247,10 +247,6 @@ export const solvePuzzle = (currentNode: NodeType, goalNode: NodeType) => {
         }
       })
     }
-    if (newOptions.length === 0) {
-      console.log(options)
-      console.log(oldOptions)
-    }
 
     let min = length * length + 1
 
@@ -269,11 +265,7 @@ export const solvePuzzle = (currentNode: NodeType, goalNode: NodeType) => {
     })
 
     if (min === 0) {
-      console.log('Hi')
-
       return options[0]
     }
-    turn++
   }
-  // console.log(oldOptions)
 }

@@ -7,19 +7,18 @@ const length = 3
 const Puzzle = () => {
   const [data, setdata] = useState<number[][]>([])
   const [numberOfMoves, setnumberOfMoves] = useState<number>(0)
+
   useEffect(() => {
     const initialData = createChartData(length)
     const splitedNumbers = [[], ...initialData, []]
     setdata(splitedNumbers)
   }, [])
 
-  const solve = () => {
-    const initialData = createChartData(length)
-
+  const getAnswer = () => {
     const currentNode: NodeType = {
       diffrence: 0,
       pattern: '',
-      puzzle: [...initialData],
+      puzzle: [...data.slice(1, 4)],
       turn: 0
     }
     const goalNode: NodeType = {
@@ -32,7 +31,40 @@ const Puzzle = () => {
       ],
       turn: 0
     }
-    solvePuzzle(currentNode, goalNode)
+    return solvePuzzle(currentNode, goalNode)
+  }
+
+  const applyAnswer = (answer: string) => {
+    let moves = answer.split('-').slice(1)
+
+    const job = setInterval(() => {
+      const move = moves[0].split('=>')
+
+      const firstPlace = move[0].split(',').map((item) => Number(item))
+      const secondPlace = move[1].split(',').map((item) => Number(item))
+
+      const temp = data[firstPlace[0] + 1][firstPlace[1]]
+      data[firstPlace[0] + 1][firstPlace[1]] =
+        data[secondPlace[0] + 1][secondPlace[1]]
+
+      data[secondPlace[0] + 1][secondPlace[1]] = temp
+
+      setdata([...data])
+      setnumberOfMoves((value) => value + 1)
+
+      if (moves.length === 1) {
+        clearInterval(job)
+      }
+      moves = moves.slice(1)
+    }, 100)
+  }
+  const solve = () => {
+    const answer = getAnswer()
+    if (!answer) {
+      alert('Ridi')
+    } else {
+      applyAnswer(answer.pattern)
+    }
   }
 
   return (
