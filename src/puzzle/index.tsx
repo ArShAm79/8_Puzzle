@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { columnOnClickHandler, createChartData } from './functions'
+import { NodeType } from '../types/node'
+import { columnOnClickHandler, createChartData, solvePuzzle } from './functions'
 import './index.css'
 
-const length = 5
+const length = 3
 const Puzzle = () => {
   const [data, setdata] = useState<number[][]>([])
   const [numberOfMoves, setnumberOfMoves] = useState<number>(0)
@@ -11,6 +12,28 @@ const Puzzle = () => {
     const splitedNumbers = [[], ...initialData, []]
     setdata(splitedNumbers)
   }, [])
+
+  const solve = () => {
+    const initialData = createChartData(length)
+
+    const currentNode: NodeType = {
+      diffrence: 0,
+      pattern: '',
+      puzzle: [...initialData],
+      turn: 0
+    }
+    const goalNode: NodeType = {
+      diffrence: 0,
+      pattern: '',
+      puzzle: [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ],
+      turn: 0
+    }
+    solvePuzzle(currentNode, goalNode)
+  }
 
   return (
     <div>
@@ -44,6 +67,9 @@ const Puzzle = () => {
       </div>
       <div>
         <h3>Number of moves: {numberOfMoves}</h3>
+      </div>
+      <div>
+        <button onClick={solve}>Solve</button>
       </div>
     </div>
   )
