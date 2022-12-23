@@ -100,8 +100,10 @@ const Puzzle = () => {
       <div>
         <h3>Number of moves: {numberOfMoves}</h3>
       </div>
-      <div>
-        <button onClick={solve}>Solve</button>
+      <div className="button-conatiner">
+        <button onClick={solve} className="solve-button">
+          Solve
+        </button>
       </div>
     </div>
   )
