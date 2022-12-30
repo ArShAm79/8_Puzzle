@@ -287,6 +287,7 @@ export const getAnswer = (cartData: number[][], goalNode: NodeType) => {
 export const rerull = (
   goalNode: NodeType,
   setdata: (data: number[][]) => void,
+  setuserData: (data: number[][]) => void,
   length: number
 ) => {
   let initialData = createChartData(length)
@@ -297,5 +298,6 @@ export const rerull = (
     const splitedNumbers = [[], ...initialData, []]
     answer = getAnswer(splitedNumbers, goalNode)
   }
-  setdata([[], ...initialData, []])
+  setdata([[], ...initialData.map((item) => [...item]), []])
+  setuserData([[], ...initialData.map((item) => [...item]), []])
 }

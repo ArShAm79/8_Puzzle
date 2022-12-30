@@ -71,3 +71,23 @@
   width: 120px;
   font-weight: bold;
 }
+.challenge-button {
+  background-color: darkgreen;
+  border-radius: 20px;
+  width: 120px;
+  font-weight: bold;
+}
+.chart-conatiner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  column-gap: 50px;
+}
+.data-box-cotainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  column-gap: 50px;
+}

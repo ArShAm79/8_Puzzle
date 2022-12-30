@@ -21,10 +21,14 @@ const Puzzle = () => {
     turn: 0
   }
 
-  const [data, setdata] = useState<number[][]>([[]])
+  const [botdata, setbotData] = useState<number[][]>([[]])
+  const [userdata, setuserData] = useState<number[][]>([[]])
   const [numberOfMoves, setnumberOfMoves] = useState<number>(0)
-  const [diffrence, setdiffrence] = useState<number>(0)
+  const [userNumberOfMoves, setusernumberOfMoves] = useState<number>(0)
+  const [botDiffrence, setbotDiffrence] = useState<number>(0)
+  const [userDiffrence, setuserDiffrence] = useState<number>(0)
   const [isStarted, setisStarted] = useState<boolean>(false)
+  const [isChallenge, setisChallenge] = useState<boolean>(false)
 
   const getAnswer = (cartData: number[][]) => {
     const currentNode: NodeType = {
@@ -38,19 +42,40 @@ const Puzzle = () => {
   }
 
   useEffect(() => {
-    rerull(goalNode, setdata, length)
+    rerull(goalNode, setbotData, setuserData, length)
   }, [])
 
   useEffect(() => {
-    const currentNode: NodeType = {
+    const botCurrentNode: NodeType = {
       diffrence: 0,
       pattern: '',
-      puzzle: [...data.slice(1, 4)],
+      puzzle: [...botdata.slice(1, 4)],
+      turn: 0
+    }
+    const userCurrentNode: NodeType = {
+      diffrence: 0,
+      pattern: '',
+      puzzle: [...botdata.slice(1, 4)],
       turn: 0
     }
 
-    setdiffrence(calculateDiffrence(currentNode, goalNode))
-  }, [data])
+    setbotDiffrence(calculateDiffrence(botCurrentNode, goalNode))
+    setuserDiffrence(calculateDiffrence(userCurrentNode, goalNode))
+  }, [botdata, userdata])
+
+  const startChallege = () => {
+    if (!isChallenge) {
+      setisChallenge(!isChallenge)
+      setisStarted(!isStarted)
+      setusernumberOfMoves(0)
+    } else {
+      setisChallenge(!isStarted)
+      setisStarted(!isStarted)
+    }
+  }
+  useEffect(() => {
+    console.log('Bot')
+  }, [botdata])
 
   const applyAnswer = (answer: string) => {
     let moves = answer.split('-').slice(1)
@@ -61,13 +86,13 @@ const Puzzle = () => {
       const firstPlace = move[0].split(',').map((item) => Number(item))
       const secondPlace = move[1].split(',').map((item) => Number(item))
 
-      const temp = data[firstPlace[0] + 1][firstPlace[1]]
-      data[firstPlace[0] + 1][firstPlace[1]] =
-        data[secondPlace[0] + 1][secondPlace[1]]
+      const temp = botdata[firstPlace[0] + 1][firstPlace[1]]
+      botdata[firstPlace[0] + 1][firstPlace[1]] =
+        botdata[secondPlace[0] + 1][secondPlace[1]]
 
-      data[secondPlace[0] + 1][secondPlace[1]] = temp
+      botdata[secondPlace[0] + 1][secondPlace[1]] = temp
 
-      setdata([...data])
+      setbotData([...botdata])
       setnumberOfMoves((value) => value + 1)
 
       if (moves.length === 1 || !isStarted) {
@@ -77,7 +102,7 @@ const Puzzle = () => {
     }, 100)
   }
   const solve = () => {
-    const answer = getAnswer(data)
+    const answer = getAnswer(botdata)
     if (answer) {
       applyAnswer(answer.pattern)
     }
@@ -89,59 +114,116 @@ const Puzzle = () => {
         <h2>8 Puzzle</h2>
         <h4>Have fun</h4>
       </header>
-      <div className="chart">
-        {data.map((row, i) => (
-          <div className="chart_row" key={row.toString() + i.toString()}>
-            {row.map((col, j) => (
+      <div className="chart-conatiner">
+        <div className="chart">
+          {botdata.map((row, i) => (
+            <div
+              className="chart_row"
+              key={row.toString() + i.toString() + 'bot'}>
+              {row.map((col, j) => (
+                <div
+                  className="chart_col"
+                  onClick={() => {
+                    if (isStarted && !isChallenge) {
+                      columnOnClickHandler(
+                        i,
+                        j,
+                        botdata,
+                        length * length,
+                        setbotData,
+                        setnumberOfMoves
+                      )
+                    }
+                  }}
+                  role="presentation"
+                  key={col.toString()}>
+                  {col === length * length ? '' : col}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        {isChallenge && (
+          <div className="chart">
+            {userdata.map((row, i) => (
               <div
-                className="chart_col"
-                onClick={() => {
-                  if (isStarted) {
-                    columnOnClickHandler(
-                      i,
-                      j,
-                      data,
-                      length * length,
-                      setdata,
-                      setnumberOfMoves
-                    )
-                  }
-                }}
-                role="presentation"
-                key={col.toString()}>
-                {col === length * length ? '' : col}
+                className="chart_row"
+                key={row.toString() + i.toString() + 'user'}>
+                {row.map((col, j) => (
+                  <div
+                    className="chart_col"
+                    onClick={() => {
+                      if (isStarted) {
+                        columnOnClickHandler(
+                          i,
+                          j,
+                          userdata,
+                          length * length,
+                          setuserData,
+                          setusernumberOfMoves
+                        )
+                      }
+                    }}
+                    role="presentation"
+                    key={col.toString()}>
+                    {col === length * length ? '' : col}
+                  </div>
+                ))}
               </div>
             ))}
           </div>
-        ))}
+        )}
       </div>
-      <div className="data-box">
-        <div className="data-box-part">
-          G: <span>{numberOfMoves}</span>
+      <div className="data-box-cotainer">
+        <div className="data-box">
+          <div className="data-box-part">
+            G: <span>{numberOfMoves}</span>
+          </div>
+          <div className="data-box-part">
+            H:
+            <span>{botDiffrence}</span>
+          </div>
+          <div className="data-box-part">
+            F: <span>{numberOfMoves + botDiffrence}</span>
+          </div>
         </div>
-        <div className="data-box-part">
-          H:
-          <span>{diffrence}</span>
-        </div>
-        <div className="data-box-part">
-          F: <span>{numberOfMoves + diffrence}</span>
-        </div>
+        {isChallenge && (
+          <div className="data-box">
+            <div className="data-box-part">
+              G: <span>{userNumberOfMoves}</span>
+            </div>
+            <div className="data-box-part">
+              H:
+              <span>{userDiffrence}</span>
+            </div>
+            <div className="data-box-part">
+              F: <span>{userNumberOfMoves + userDiffrence}</span>
+            </div>
+          </div>
+        )}
       </div>
       <div className="button-conatiner">
         {!isStarted && (
           <button
-            onClick={() => rerull(goalNode, setdata, length)}
+            onClick={() => rerull(goalNode, setbotData, setuserData, length)}
+            disabled={isChallenge}
             className="rerull-button">
             Rerull
           </button>
         )}
+        <button className="challenge-button" onClick={startChallege}>
+          {isChallenge ? 'Hide' : 'Challenge'}
+        </button>
         <button
           onClick={() => setisStarted(!isStarted)}
           className="start-button">
           {isStarted ? 'Stop' : 'Start'}
         </button>
         <button onClick={solve} className="solve-button" disabled={!isStarted}>
-          Solve
+          Solve IDA*
+        </button>
+        <button onClick={solve} className="solve-button" disabled={!isStarted}>
+          Solve RBFS
         </button>
       </div>
     </div>
