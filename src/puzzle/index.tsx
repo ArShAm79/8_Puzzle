@@ -1,18 +1,47 @@
 import { useEffect, useState } from 'react'
 import { NodeType } from '../types/node'
-import { columnOnClickHandler, createChartData, solvePuzzle } from './functions'
+import {
+  calculateDiffrence,
+  columnOnClickHandler,
+  createChartData,
+  solvePuzzle
+} from './functions'
 import './index.css'
 
 const length = 3
 const Puzzle = () => {
+  const goalNode: NodeType = {
+    diffrence: 0,
+    pattern: '',
+    puzzle: [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9]
+    ],
+    turn: 0
+  }
+
   const [data, setdata] = useState<number[][]>([])
   const [numberOfMoves, setnumberOfMoves] = useState<number>(0)
+  const [diffrence, setdiffrence] = useState<number>(0)
 
   useEffect(() => {
     const initialData = createChartData(length)
     const splitedNumbers = [[], ...initialData, []]
     setdata(splitedNumbers)
   }, [])
+
+  useEffect(() => {
+    const currentNode: NodeType = {
+      diffrence: 0,
+      pattern: '',
+      puzzle: [...data.slice(1, 4)],
+      turn: 0
+    }
+    console.log('asdd')
+
+    setdiffrence(calculateDiffrence(currentNode, goalNode))
+  }, [data])
 
   const getAnswer = () => {
     const currentNode: NodeType = {
@@ -21,16 +50,7 @@ const Puzzle = () => {
       puzzle: [...data.slice(1, 4)],
       turn: 0
     }
-    const goalNode: NodeType = {
-      diffrence: 0,
-      pattern: '',
-      puzzle: [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-      ],
-      turn: 0
-    }
+
     return solvePuzzle(currentNode, goalNode)
   }
 
@@ -98,7 +118,13 @@ const Puzzle = () => {
         ))}
       </div>
       <div>
-        <h3>Number of moves: {numberOfMoves}</h3>
+        <h3>G: {numberOfMoves}</h3>
+      </div>
+      <div>
+        <h3>H: {diffrence}</h3>
+      </div>
+      <div>
+        <h3>F: {numberOfMoves + diffrence}</h3>
       </div>
       <div className="button-conatiner">
         <button onClick={solve} className="solve-button">

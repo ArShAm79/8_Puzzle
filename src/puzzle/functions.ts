@@ -155,7 +155,10 @@ export const createChartData = (length: number) => {
   return node.puzzle
 }
 
-const calculateDiffrence = (currentNode: NodeType, goalNode: NodeType) => {
+export const calculateDiffrence = (
+  currentNode: NodeType,
+  goalNode: NodeType
+) => {
   const currentNodeData = currentNode.puzzle
     .join(',')
     .replaceAll(',', ' ')
