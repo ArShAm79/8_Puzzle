@@ -21,14 +21,31 @@ const Puzzle = () => {
     turn: 0
   }
 
-  const [data, setdata] = useState<number[][]>([])
+  const [data, setdata] = useState<number[][]>([[]])
   const [numberOfMoves, setnumberOfMoves] = useState<number>(0)
   const [diffrence, setdiffrence] = useState<number>(0)
 
+  const getAnswer = (cartData: number[][]) => {
+    const currentNode: NodeType = {
+      diffrence: 0,
+      pattern: '',
+      puzzle: [...cartData.slice(1, 4)],
+      turn: 0
+    }
+
+    return solvePuzzle(currentNode, goalNode)
+  }
+
   useEffect(() => {
-    const initialData = createChartData(length)
-    const splitedNumbers = [[], ...initialData, []]
-    setdata(splitedNumbers)
+    let initialData = createChartData(length)
+    let answer = getAnswer([[], ...initialData, []])
+
+    while (!answer) {
+      initialData = createChartData(length)
+      const splitedNumbers = [[], ...initialData, []]
+      answer = getAnswer(splitedNumbers)
+    }
+    setdata([[], ...initialData, []])
   }, [])
 
   useEffect(() => {
@@ -38,21 +55,9 @@ const Puzzle = () => {
       puzzle: [...data.slice(1, 4)],
       turn: 0
     }
-    console.log('asdd')
 
     setdiffrence(calculateDiffrence(currentNode, goalNode))
   }, [data])
-
-  const getAnswer = () => {
-    const currentNode: NodeType = {
-      diffrence: 0,
-      pattern: '',
-      puzzle: [...data.slice(1, 4)],
-      turn: 0
-    }
-
-    return solvePuzzle(currentNode, goalNode)
-  }
 
   const applyAnswer = (answer: string) => {
     let moves = answer.split('-').slice(1)
@@ -79,7 +84,7 @@ const Puzzle = () => {
     }, 100)
   }
   const solve = () => {
-    const answer = getAnswer()
+    const answer = getAnswer(data)
     if (!answer) {
       alert('Ridi')
     } else {
@@ -94,37 +99,41 @@ const Puzzle = () => {
         <h4>Have fun</h4>
       </header>
       <div className="chart">
-        {data.map((row, i) => (
-          <div className="chart_row" key={row.toString() + i.toString()}>
-            {row.map((col, j) => (
-              <div
-                className="chart_col"
-                onClick={() =>
-                  columnOnClickHandler(
-                    i,
-                    j,
-                    data,
-                    length * length,
-                    setdata,
-                    setnumberOfMoves
-                  )
-                }
-                role="presentation"
-                key={col.toString()}>
-                {col === length * length ? '' : col}
-              </div>
-            ))}
-          </div>
-        ))}
+        {data &&
+          data.map((row, i) => (
+            <div className="chart_row" key={row.toString() + i.toString()}>
+              {row.map((col, j) => (
+                <div
+                  className="chart_col"
+                  onClick={() =>
+                    columnOnClickHandler(
+                      i,
+                      j,
+                      data,
+                      length * length,
+                      setdata,
+                      setnumberOfMoves
+                    )
+                  }
+                  role="presentation"
+                  key={col.toString()}>
+                  {col === length * length ? '' : col}
+                </div>
+              ))}
+            </div>
+          ))}
       </div>
-      <div>
-        <h3>G: {numberOfMoves}</h3>
-      </div>
-      <div>
-        <h3>H: {diffrence}</h3>
-      </div>
-      <div>
-        <h3>F: {numberOfMoves + diffrence}</h3>
+      <div className="data-box">
+        <div className="data-box-part">
+          G: <span>{numberOfMoves}</span>
+        </div>
+        <div className="data-box-part">
+          H:
+          <span>{diffrence}</span>
+        </div>
+        <div className="data-box-part">
+          F: <span>{numberOfMoves + diffrence}</span>
+        </div>
       </div>
       <div className="button-conatiner">
         <button onClick={solve} className="solve-button">
