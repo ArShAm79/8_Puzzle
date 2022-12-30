@@ -272,3 +272,30 @@ export const solvePuzzle = (currentNode: NodeType, goalNode: NodeType) => {
     }
   }
 }
+
+export const getAnswer = (cartData: number[][], goalNode: NodeType) => {
+  const currentNode: NodeType = {
+    diffrence: 0,
+    pattern: '',
+    puzzle: [...cartData.slice(1, 4)],
+    turn: 0
+  }
+
+  return solvePuzzle(currentNode, goalNode)
+}
+
+export const rerull = (
+  goalNode: NodeType,
+  setdata: (data: number[][]) => void,
+  length: number
+) => {
+  let initialData = createChartData(length)
+  let answer = getAnswer([[], ...initialData, []], goalNode)
+
+  while (!answer) {
+    initialData = createChartData(length)
+    const splitedNumbers = [[], ...initialData, []]
+    answer = getAnswer(splitedNumbers, goalNode)
+  }
+  setdata([[], ...initialData, []])
+}

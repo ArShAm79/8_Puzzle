@@ -3,7 +3,7 @@ import { NodeType } from '../types/node'
 import {
   calculateDiffrence,
   columnOnClickHandler,
-  createChartData,
+  rerull,
   solvePuzzle
 } from './functions'
 import './index.css'
@@ -24,6 +24,7 @@ const Puzzle = () => {
   const [data, setdata] = useState<number[][]>([[]])
   const [numberOfMoves, setnumberOfMoves] = useState<number>(0)
   const [diffrence, setdiffrence] = useState<number>(0)
+  const [isStarted, setisStarted] = useState<boolean>(false)
 
   const getAnswer = (cartData: number[][]) => {
     const currentNode: NodeType = {
@@ -37,15 +38,7 @@ const Puzzle = () => {
   }
 
   useEffect(() => {
-    let initialData = createChartData(length)
-    let answer = getAnswer([[], ...initialData, []])
-
-    while (!answer) {
-      initialData = createChartData(length)
-      const splitedNumbers = [[], ...initialData, []]
-      answer = getAnswer(splitedNumbers)
-    }
-    setdata([[], ...initialData, []])
+    rerull(goalNode, setdata, length)
   }, [])
 
   useEffect(() => {
@@ -77,7 +70,7 @@ const Puzzle = () => {
       setdata([...data])
       setnumberOfMoves((value) => value + 1)
 
-      if (moves.length === 1) {
+      if (moves.length === 1 || !isStarted) {
         clearInterval(job)
       }
       moves = moves.slice(1)
@@ -85,9 +78,7 @@ const Puzzle = () => {
   }
   const solve = () => {
     const answer = getAnswer(data)
-    if (!answer) {
-      alert('Ridi')
-    } else {
+    if (answer) {
       applyAnswer(answer.pattern)
     }
   }
@@ -99,13 +90,13 @@ const Puzzle = () => {
         <h4>Have fun</h4>
       </header>
       <div className="chart">
-        {data &&
-          data.map((row, i) => (
-            <div className="chart_row" key={row.toString() + i.toString()}>
-              {row.map((col, j) => (
-                <div
-                  className="chart_col"
-                  onClick={() =>
+        {data.map((row, i) => (
+          <div className="chart_row" key={row.toString() + i.toString()}>
+            {row.map((col, j) => (
+              <div
+                className="chart_col"
+                onClick={() => {
+                  if (isStarted) {
                     columnOnClickHandler(
                       i,
                       j,
@@ -115,13 +106,14 @@ const Puzzle = () => {
                       setnumberOfMoves
                     )
                   }
-                  role="presentation"
-                  key={col.toString()}>
-                  {col === length * length ? '' : col}
-                </div>
-              ))}
-            </div>
-          ))}
+                }}
+                role="presentation"
+                key={col.toString()}>
+                {col === length * length ? '' : col}
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
       <div className="data-box">
         <div className="data-box-part">
@@ -136,7 +128,19 @@ const Puzzle = () => {
         </div>
       </div>
       <div className="button-conatiner">
-        <button onClick={solve} className="solve-button">
+        {!isStarted && (
+          <button
+            onClick={() => rerull(goalNode, setdata, length)}
+            className="rerull-button">
+            Rerull
+          </button>
+        )}
+        <button
+          onClick={() => setisStarted(!isStarted)}
+          className="start-button">
+          {isStarted ? 'Stop' : 'Start'}
+        </button>
+        <button onClick={solve} className="solve-button" disabled={!isStarted}>
           Solve
         </button>
       </div>
