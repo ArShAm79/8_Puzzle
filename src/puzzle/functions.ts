@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-loop-func */
-
+import { Dispatch, SetStateAction } from 'react'
 import { NodeType } from '../types/node'
 
 export const checkIsFinished = (data: number[][]) => {
@@ -48,7 +48,7 @@ export const columnOnClickHandler = (
   data: number[][],
   target: number,
   setdata: (value: number[][]) => void,
-  setnumberOfMoves: React.Dispatch<React.SetStateAction<number>>
+  setnumberOfMoves: Dispatch<SetStateAction<number>>
 ) => {
   const info = checkIsCornerTo9(rowIndex, colIndex, data, target)
   if (info) {
