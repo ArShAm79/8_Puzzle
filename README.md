@@ -11,22 +11,10 @@ Install package:
 npm i
 ```
 
-or
-
-```
-yarn
-```
-
 ## Deploy
 
 For running:
 
 ```
 npm run dev
-```
-
-or
-
-```
-yarn run dev
 ```
