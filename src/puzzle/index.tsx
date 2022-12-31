@@ -23,12 +23,12 @@ const Puzzle = () => {
 
   const [botdata, setbotData] = useState<number[][]>([[]])
   const [userdata, setuserData] = useState<number[][]>([[]])
-  const [numberOfMoves, setnumberOfMoves] = useState<number>(0)
-  const [userNumberOfMoves, setusernumberOfMoves] = useState<number>(0)
-  const [botDiffrence, setbotDiffrence] = useState<number>(0)
-  const [userDiffrence, setuserDiffrence] = useState<number>(0)
-  const [isStarted, setisStarted] = useState<boolean>(false)
-  const [isChallenge, setisChallenge] = useState<boolean>(false)
+  const [numberOfMoves, setnumberOfMoves] = useState(0)
+  const [userNumberOfMoves, setusernumberOfMoves] = useState(0)
+  const [botDiffrence, setbotDiffrence] = useState(0)
+  const [userDiffrence, setuserDiffrence] = useState(0)
+  const [isStarted, setisStarted] = useState(false)
+  const [isChallenge, setisChallenge] = useState(false)
 
   const getAnswer = (cartData: number[][]) => {
     const currentNode: NodeType = {
@@ -73,9 +73,6 @@ const Puzzle = () => {
       setisStarted(!isStarted)
     }
   }
-  useEffect(() => {
-    console.log('Bot')
-  }, [botdata])
 
   const applyAnswer = (answer: string) => {
     let moves = answer.split('-').slice(1)
